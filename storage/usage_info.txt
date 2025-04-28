@@ -1,0 +1,52 @@
+
+Users of active_collab:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of cam_base:  (Total of 2 licenses issued;  Total of 1 license in use)
+
+  "cam_base" v2024.12, vendor: ugslmd, expiry: 31-jan-2026
+  floating license
+
+    trann HVC-02 HVC-020.0 (v2024.06) (HVC-02/28000 302), start Wed 3/26 9:50
+
+Users of aero_defense_author:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of ai_q_and_a_svc:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of assemblies:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of autocad_integration:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+--------
+Status
+--------
+Flexible License Manager status on Wed 3/26/2025 13:57
+
+[Detecting lmgrd processes...]
+License server status: 28000@HVC-02
+    License file(s) on HVC-02: C:\ProgramData\Siemens\License Server\ActiveLicenses\ugslmd.lic:
+
+    HVC-02: license server UP (MASTER) v11.19.5
+
+Vendor daemon status (on HVC-02):
+
+     saltd: UP v11.19.5
+Feature usage info:
+
+    ugslmd: UP v11.19.5
+Feature usage info:
+
+Users of active_collab:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of adv_structure_mgt:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of nx_ml_cmd_pred_ui:  (Total of 1 license issued;  Total of 1 license in use)
+
+  "nx_ml_cmd_pred_ui" v2024.12, vendor: ugslmd, expiry: 31-jan-2026
+  floating license
+
+    trann HVC-02 HVC-020.0 (v2024.06) (HVC-02/28000 201), start Wed 3/26 9:49
+
+Users of prd_vkrc1_ps_controller:  (Error: 1 licenses, unsupported by licensed server)
+
+Users of prd_vr_analyze:  (Error: 1 licenses, unsupported by licensed server)
+

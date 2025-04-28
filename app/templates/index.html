@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NX License Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            margin-bottom: 20px;
+        }
+        .usage-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .usage-item:last-child {
+            border-bottom: none;
+        }
+        .bundle-info {
+            margin-bottom: 15px;
+        }
+        .progress {
+            height: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>NX License Manager Dashboard</h1>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>License Bundles</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="bundles-list">
+                            Loading bundles...
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Current Usage</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="usage-list">
+                            Loading usage information...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Server Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="server-status">
+                            Loading server status...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to format date
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Unknown';
+            return new Date(dateStr).toLocaleString();
+        }
+
+        // Function to update bundles display
+        function updateBundles(data) {
+            const bundlesList = document.getElementById('bundles-list');
+            let html = '';
+            
+            for (const [bundleName, bundleInfo] of Object.entries(data.bundles)) {
+                const used = bundleInfo.used_licenses;
+                const total = bundleInfo.total_licenses;
+                const percentage = (used / total) * 100;
+                
+                html += `
+                    <div class="bundle-info">
+                        <h6>${bundleName}</h6>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: ${percentage}%" 
+                                 aria-valuenow="${used}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="${total}">
+                                ${used}/${total} licenses used
+                            </div>
+                        </div>
+                        <small class="text-muted">Available: ${bundleInfo.available_licenses}</small>
+                    </div>
+                `;
+            }
+            
+            bundlesList.innerHTML = html;
+        }
+
+        // Function to update usage display
+        function updateUsage(data) {
+            const usageList = document.getElementById('usage-list');
+            let html = '';
+            
+            for (const [feature, users] of Object.entries(data.usage)) {
+                if (users.length > 0) {
+                    html += `<h6>${feature}</h6>`;
+                    users.forEach(user => {
+                        html += `
+                            <div class="usage-item">
+                                <strong>${user.user}</strong> on ${user.host}<br>
+                                Started: ${formatDate(user.start_time)}
+                            </div>
+                        `;
+                    });
+                }
+            }
+            
+            usageList.innerHTML = html || 'No active users';
+        }
+
+        // Function to update server status
+        function updateServerStatus(data) {
+            const statusDiv = document.getElementById('server-status');
+            const status = data.status;
+            
+            let html = `
+                <div class="alert alert-${status.status === 'UP' ? 'success' : 'danger'}">
+                    <strong>Server Status:</strong> ${status.status}<br>
+                    <strong>Server:</strong> ${status.server}<br>
+                    <strong>Version:</strong> ${status.version}<br>
+                    <strong>License File:</strong> ${status.license_file}
+                </div>
+            `;
+            
+            statusDiv.innerHTML = html;
+        }
+
+        // Fetch and update all data
+        async function updateAllData() {
+            try {
+                const response = await fetch('/api/summary');
+                const data = await response.json();
+                updateBundles(data);
+                updateServerStatus(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+
+            try {
+                const response = await fetch('/api/usage');
+                const data = await response.json();
+                updateUsage(data);
+            } catch (error) {
+                console.error('Error fetching usage data:', error);
+            }
+        }
+
+        // Update data immediately and then every 30 seconds
+        updateAllData();
+        setInterval(updateAllData, 30000);
+    </script>
+</body>
+</html> 
