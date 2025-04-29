@@ -12,6 +12,10 @@ usage_parser = UsageParser('storage/usage_info.txt')
 license_parser.parse()
 usage_parser.parse()
 
+# Display license information for debugging
+print("\n=== License Information ===")
+license_parser.display_licenses()
+
 @main.route('/')
 def index():
     return render_template('index.html')
@@ -23,11 +27,11 @@ def get_bundles():
         'bundles': bundles
     })
 
-@main.route('/api/features')
-def get_features():
-    features = license_parser.get_features()
+@main.route('/api/feature/<feature_name>')
+def get_feature_owner(feature_name):
+    result = license_parser.find_feature_owner(feature_name)
     return jsonify({
-        'features': features
+        'result': result
     })
 
 @main.route('/api/usage')
@@ -52,12 +56,26 @@ def get_summary():
     status = usage_parser.get_status()
 
     bundle_usage = {}
-    for bundle_name, quantity in bundles.items():
+    for bundle_name, bundle_info in bundles.items():
+        used_features = []
+        total_used = 0
+        
+        # Tính số lượng license đã sử dụng cho bundle này
+        for feature_name in bundle_info['features']:
+            if feature_name in usage:
+                feature_users = usage[feature_name]
+                used_features.extend(feature_users)
+                total_used = max(total_used, len(feature_users))  # Lấy số lượng users lớn nhất
+
+        # Loại bỏ duplicate users
+        unique_users = list(set(used_features))
+        
         bundle_usage[bundle_name] = {
-            'total_licenses': quantity,
-            'used_licenses': 0,  # Không có thông tin feature nên không tính được
-            'available_licenses': quantity,
-            'users': []
+            'total_licenses': bundle_info['quantity'],
+            'used_licenses': total_used,
+            'available_licenses': bundle_info['quantity'] - total_used,
+            'description': bundle_info['description'],
+            'users': unique_users
         }
 
     return jsonify({
