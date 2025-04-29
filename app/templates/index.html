@@ -8,13 +8,7 @@
     <style>
         .card {
             margin-bottom: 20px;
-        }
-        .usage-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .usage-item:last-child {
-            border-bottom: none;
+            height: 100%;  /* Để các card có chiều cao bằng nhau */
         }
         .bundle-info {
             margin-bottom: 15px;
@@ -43,21 +37,6 @@
             </div>
             
             <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Current Usage</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="usage-list">
-                            Loading usage information...
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <h5>Server Status</h5>
@@ -93,8 +72,10 @@
                 html += `
                     <div class="bundle-info">
                         <h6>${bundleName}</h6>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" 
+                        <small class="text-muted">${bundleInfo.description}</small>
+                        <div class="progress mt-2">
+                            <div class="progress-bar ${percentage >= 90 ? 'bg-danger' : percentage >= 70 ? 'bg-warning' : 'bg-success'}" 
+                                 role="progressbar" 
                                  style="width: ${percentage}%" 
                                  aria-valuenow="${used}" 
                                  aria-valuemin="0" 
@@ -108,28 +89,6 @@
             }
             
             bundlesList.innerHTML = html;
-        }
-
-        // Function to update usage display
-        function updateUsage(data) {
-            const usageList = document.getElementById('usage-list');
-            let html = '';
-            
-            for (const [feature, users] of Object.entries(data.usage)) {
-                if (users.length > 0) {
-                    html += `<h6>${feature}</h6>`;
-                    users.forEach(user => {
-                        html += `
-                            <div class="usage-item">
-                                <strong>${user.user}</strong> on ${user.host}<br>
-                                Started: ${formatDate(user.start_time)}
-                            </div>
-                        `;
-                    });
-                }
-            }
-            
-            usageList.innerHTML = html || 'No active users';
         }
 
         // Function to update server status
@@ -157,20 +116,13 @@
         // Fetch and update all data
         async function updateAllData() {
             try {
-                const response = await fetch('/api/summary');
-                const data = await response.json();
-                updateBundles(data);
-                updateServerStatus(data);
+                const summaryResponse = await fetch('/api/summary');
+                const summaryData = await summaryResponse.json();
+                
+                updateBundles(summaryData);
+                updateServerStatus(summaryData);
             } catch (error) {
                 console.error('Error fetching data:', error);
-            }
-
-            try {
-                const response = await fetch('/api/usage');
-                const data = await response.json();
-                updateUsage(data);
-            } catch (error) {
-                console.error('Error fetching usage data:', error);
             }
         }
 
