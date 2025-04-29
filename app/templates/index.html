@@ -8,13 +8,20 @@
     <style>
         .card {
             margin-bottom: 20px;
-            height: 100%;  /* Để các card có chiều cao bằng nhau */
+            height: 100%;
         }
         .bundle-info {
             margin-bottom: 15px;
         }
         .progress {
             height: 25px;
+        }
+        .usage-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .usage-item:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
@@ -37,6 +44,21 @@
             </div>
             
             <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Current Usage</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="current-usage">
+                            Loading current usage...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <h5>Server Status</h5>
@@ -91,6 +113,33 @@
             bundlesList.innerHTML = html;
         }
 
+        // Function to update current usage display
+        function updateCurrentUsage(data) {
+            const usageDiv = document.getElementById('current-usage');
+            let html = '';
+            
+            for (const [bundleName, bundleInfo] of Object.entries(data.bundles)) {
+                if (bundleInfo.users && bundleInfo.users.length > 0) {
+                    html += `<h6 class="mt-3">${bundleName}</h6>`;
+                    bundleInfo.users.forEach(user => {
+                        html += `
+                            <div class="usage-item">
+                                <strong>User:</strong> ${user.user}<br>
+                                <strong>Host:</strong> ${user.host}<br>
+                                <strong>Started:</strong> ${formatDate(user.started)}<br>
+                            </div>
+                        `;
+                    });
+                }
+            }
+            
+            if (!html) {
+                html = '<div class="alert alert-info">No active users found.</div>';
+            }
+            
+            usageDiv.innerHTML = html;
+        }
+
         // Function to update server status
         function updateServerStatus(data) {
             const statusDiv = document.getElementById('server-status');
@@ -120,6 +169,7 @@
                 const summaryData = await summaryResponse.json();
                 
                 updateBundles(summaryData);
+                updateCurrentUsage(summaryData);
                 updateServerStatus(summaryData);
             } catch (error) {
                 console.error('Error fetching data:', error);
