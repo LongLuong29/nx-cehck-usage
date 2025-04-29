@@ -135,14 +135,19 @@
         // Function to update server status
         function updateServerStatus(data) {
             const statusDiv = document.getElementById('server-status');
-            const status = data.status;
-            
+            const status = data.status || data.server_status || {};
+
+            if (!status.status) {
+                statusDiv.innerHTML = `<div class="alert alert-warning">No server status data available.</div>`;
+                return;
+            }
+
             let html = `
                 <div class="alert alert-${status.status === 'UP' ? 'success' : 'danger'}">
                     <strong>Server Status:</strong> ${status.status}<br>
-                    <strong>Server:</strong> ${status.server}<br>
-                    <strong>Version:</strong> ${status.version}<br>
-                    <strong>License File:</strong> ${status.license_file}
+                    <strong>Server:</strong> ${status.server || ''}<br>
+                    <strong>Version:</strong> ${status.version || ''}<br>
+                    <strong>License File:</strong> ${status.license_file || ''}
                 </div>
             `;
             

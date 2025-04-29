@@ -50,27 +50,16 @@ def get_summary():
     bundles = license_parser.get_bundles()
     usage = usage_parser.get_usage()
     status = usage_parser.get_status()
-    
-    # Calculate usage per bundle
+
     bundle_usage = {}
-    for bundle_name, bundle_info in bundles.items():
-        features = bundle_info['features']
-        total_used = 0
-        users = []
-        
-        for feature in features:
-            if feature in usage:
-                feature_users = usage[feature]
-                total_used += len(feature_users)
-                users.extend(feature_users)
-        
+    for bundle_name, quantity in bundles.items():
         bundle_usage[bundle_name] = {
-            'total_licenses': bundle_info['quantity'],
-            'used_licenses': total_used,
-            'available_licenses': bundle_info['quantity'] - total_used,
-            'users': users
+            'total_licenses': quantity,
+            'used_licenses': 0,  # Không có thông tin feature nên không tính được
+            'available_licenses': quantity,
+            'users': []
         }
-    
+
     return jsonify({
         'bundles': bundle_usage,
         'server_status': status
