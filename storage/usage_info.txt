@@ -39,9 +39,9 @@ Users of active_collab:  (Total of 1 license issued;  Total of 0 licenses in use
 
 Users of adv_structure_mgt:  (Total of 1 license issued;  Total of 0 licenses in use)
 
-Users of nx_ml_cmd_pred_ui:  (Total of 1 license issued;  Total of 1 license in use)
+Users of 3d_to_2d_flattene:  (Total of 1 license issued;  Total of 1 license in use)
 
-  "nx_ml_cmd_pred_ui" v2024.12, vendor: ugslmd, expiry: 31-jan-2026
+  "3d_to_2d_flattener" v2024.12, vendor: ugslmd, expiry: 31-jan-2026
   floating license
 
     trann HVC-02 HVC-020.0 (v2024.06) (HVC-02/28000 201), start Wed 3/26 9:49
